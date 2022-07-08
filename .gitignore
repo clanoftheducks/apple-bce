@@ -3,5 +3,5 @@
 *.o*
 *.ko*
 *.order
-*Module.symvers*
-*.patch
+Module.symvers
+.Module.symvers.cmd
