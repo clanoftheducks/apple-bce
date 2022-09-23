@@ -93,12 +93,11 @@ struct aaudio_device {
     struct auxiliary_device *aux_dev;
     struct apple_bce_device *bce;
     struct pci_dev *pci_dev;
-    dev_t devt;
     struct device *dev;
+
     void __iomem *reg_mem_bs;
     dma_addr_t reg_mem_bs_dma;
     void __iomem *reg_mem_cfg;
-
     u32 __iomem *reg_mem_gpr;
 
     struct aaudio_buffer_struct *bs;
@@ -117,9 +116,6 @@ void aaudio_handle_notification(struct aaudio_device *a, struct aaudio_msg *msg)
 void aaudio_handle_prop_change_work(struct work_struct *ws);
 void aaudio_handle_cmd_timestamp(struct aaudio_device *a, struct aaudio_msg *msg);
 void aaudio_handle_command(struct aaudio_device *a, struct aaudio_msg *msg);
-
-int aaudio_module_init(void);
-void aaudio_module_exit(void);
 
 extern struct aaudio_alsa_pcm_id_mapping aaudio_alsa_id_mappings[];
 
