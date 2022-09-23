@@ -270,12 +270,12 @@ static int bce_vhci_enable_device(struct usb_hcd *hcd, struct usb_device *udev)
     vhci->port_to_device[udev->portnum] = devid;
     vhci->devices[devid] = vdev;
 
-    bce_vhci_create_transfer_queue(vhci, &vdev->tq[0], &udev->ep0, devid, DMA_BIDIRECTIONAL);
+    if (bce_vhci_create_transfer_queue(vhci, &vdev->tq[0], &udev->ep0, devid, DMA_BIDIRECTIONAL))
+        return -EINVAL;
     udev->ep0.hcpriv = &vdev->tq[0];
     vdev->tq_mask |= BIT(0);
 
-    bce_vhci_cmd_endpoint_create(&vhci->cq, devid, &udev->ep0.desc);
-    return 0;
+    return bce_vhci_cmd_endpoint_create(&vhci->cq, devid, &udev->ep0.desc);
 }
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(6,8,0)

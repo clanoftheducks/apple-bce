@@ -341,6 +341,7 @@ struct bce_queue_cq *bce_create_cq(struct apple_bce_device *dev, u32 el_count)
 {
     struct bce_queue_cq *cq;
     struct bce_queue_memcfg cfg;
+    int status;
 #if LINUX_VERSION_CODE < KERNEL_VERSION(6,18,0)
     int qid = ida_simple_get(&dev->queue_ida, BCE_QUEUE_USER_MIN, BCE_QUEUE_USER_MAX, GFP_KERNEL);
 #else
@@ -352,8 +353,9 @@ struct bce_queue_cq *bce_create_cq(struct apple_bce_device *dev, u32 el_count)
     if (!cq)
         return NULL;
     bce_get_cq_memcfg(cq, &cfg);
-    if (bce_cmd_register_queue(dev->cmd_cmdq, &cfg, NULL, false) != 0) {
-        pr_err("apple-bce: CQ registration failed (%i)", qid);
+    status = bce_cmd_register_queue(dev->cmd_cmdq, &cfg, NULL, false);
+    if (status) {
+        pr_err("apple-bce: CQ registration failed (qid=%i, err=%d)", qid, status);
         bce_free_cq(dev, cq);
 #if LINUX_VERSION_CODE < KERNEL_VERSION(6,18,0)
         ida_simple_remove(&dev->queue_ida, (uint) qid);
@@ -373,6 +375,7 @@ struct bce_queue_sq *bce_create_sq(struct apple_bce_device *dev, struct bce_queu
 {
     struct bce_queue_sq *sq;
     struct bce_queue_memcfg cfg;
+    int status;
     int qid;
     if (cq == NULL)
         return NULL; /* cq can not be null */
@@ -391,8 +394,9 @@ struct bce_queue_sq *bce_create_sq(struct apple_bce_device *dev, struct bce_queu
     if (!sq)
         return NULL;
     bce_get_sq_memcfg(sq, cq, &cfg);
-    if (bce_cmd_register_queue(dev->cmd_cmdq, &cfg, name, direction != DMA_FROM_DEVICE) != 0) {
-        pr_err("apple-bce: SQ registration failed (%i)", qid);
+    status = bce_cmd_register_queue(dev->cmd_cmdq, &cfg, name, direction != DMA_FROM_DEVICE);
+    if (status) {
+        pr_err("apple-bce: SQ registration failed (qid=%i, err=%d)", qid, status);
         bce_free_sq(dev, sq);
 #if LINUX_VERSION_CODE < KERNEL_VERSION(6,18,0)
         ida_simple_remove(&dev->queue_ida, (uint) qid);
