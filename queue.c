@@ -365,6 +365,7 @@ struct bce_queue_cq *bce_create_cq(struct apple_bce_device *dev, u32 el_count)
         return NULL;
     }
     dev->queues[qid] = (struct bce_queue *) cq;
+    pr_info("apple-bce: Created CQ, qid=%d\n", qid);
     return cq;
 }
 
@@ -408,6 +409,7 @@ struct bce_queue_sq *bce_create_sq(struct apple_bce_device *dev, struct bce_queu
     spin_lock(&dev->queues_lock);
     dev->queues[qid] = (struct bce_queue *) sq;
     spin_unlock(&dev->queues_lock);
+    pr_info("apple-bce: Created SQ, qid=%d, cq->qid=%d, name=%s\n", qid, cq->qid, name);
     return sq;
 }
 
@@ -426,6 +428,7 @@ void bce_destroy_cq(struct apple_bce_device *dev, struct bce_queue_cq *cq)
     ida_free(&dev->queue_ida, (uint) cq->qid);
 #endif
     bce_free_cq(dev, cq);
+    pr_info("apple-bce: Destroyed CQ, qid=%d\n", cq->qid);
 }
 
 EXPORT_SYMBOL_GPL(bce_destroy_cq);
@@ -443,6 +446,7 @@ void bce_destroy_sq(struct apple_bce_device *dev, struct bce_queue_sq *sq)
     ida_free(&dev->queue_ida, (uint) sq->qid);
 #endif
     bce_free_sq(dev, sq);
+    pr_info("apple-bce: Destroyed SQ, qid=%d\n", sq->qid);
 }
 
 EXPORT_SYMBOL_GPL(bce_destroy_sq);
