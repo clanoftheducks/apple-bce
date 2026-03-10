@@ -19,6 +19,9 @@ static int bce_vhci_create_message_queues(struct bce_vhci *vhci);
 static void bce_vhci_destroy_message_queues(struct bce_vhci *vhci);
 static void bce_vhci_handle_firmware_events_w(struct work_struct *ws);
 static void bce_vhci_firmware_event_completion(struct bce_queue_sq *sq);
+static struct bce_vhci *bce_vhci_from_hcd(struct usb_hcd *hcd);
+static int bce_vhci_start(struct usb_hcd *hcd);
+static void bce_vhci_stop(struct usb_hcd *hcd);
 
 int bce_vhci_create(struct auxiliary_device *aux_dev, const struct auxiliary_device_id *id)
 {
@@ -99,12 +102,12 @@ void bce_vhci_destroy(struct auxiliary_device *aux_dev)
     device_destroy(bce_vhci_class, vhci->vdevt);
 }
 
-struct bce_vhci *bce_vhci_from_hcd(struct usb_hcd *hcd)
+static struct bce_vhci *bce_vhci_from_hcd(struct usb_hcd *hcd)
 {
     return *((struct bce_vhci **) hcd->hcd_priv);
 }
 
-int bce_vhci_start(struct usb_hcd *hcd)
+static int bce_vhci_start(struct usb_hcd *hcd)
 {
     struct bce_vhci *vhci = bce_vhci_from_hcd(hcd);
     int status;
@@ -125,7 +128,7 @@ int bce_vhci_start(struct usb_hcd *hcd)
     return 0;
 }
 
-void bce_vhci_stop(struct usb_hcd *hcd)
+static void bce_vhci_stop(struct usb_hcd *hcd)
 {
     struct bce_vhci *vhci = bce_vhci_from_hcd(hcd);
     bce_vhci_cmd_controller_disable(&vhci->cq);

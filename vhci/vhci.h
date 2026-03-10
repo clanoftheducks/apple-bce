@@ -49,4 +49,10 @@ struct bce_vhci {
     unsigned long port_change_pending;
 };
 
+int __init bce_vhci_module_init(void);
+void __exit bce_vhci_module_exit(void);
+
+int bce_vhci_create(struct auxiliary_device *aux_dev, const struct auxiliary_device_id *id);
+void bce_vhci_destroy(struct auxiliary_device *aux_dev);
+
 #endif //BCE_VHCI_H

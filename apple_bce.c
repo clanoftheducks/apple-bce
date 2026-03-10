@@ -2,6 +2,7 @@
 #include <linux/auxiliary_bus.h>
 #include <linux/module.h>
 #include <linux/crc32.h>
+#include <linux/version.h>
 
 static dev_t bce_chrdev;
 static struct class *bce_class;
